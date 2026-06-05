@@ -1,0 +1,9 @@
+bin/
+obj/
+*.exe
+*.o
+*.save
+*.layout
+*.depend
+.vscode/
+.idea/

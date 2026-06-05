@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1780695768 source:c:\programiring\pws\dingaling\main.c
-	"raylib.h"
-	"stdio.h"
-	"stdlib.h"
-	"stdbool.h"
-	"time.h"
-
