@@ -1,0 +1,68 @@
+#include "raylib.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "stdbool.h"
+#include "time.h"
+
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 1000
+#define GRID_SPACE 100
+
+#define COLLS (SCREEN_WIDTH / GRID_SPACE)
+#define ROWS (SCREEN_HEIGHT / GRID_SPACE)
+
+
+int main()
+{
+    // Window
+    int screenWidth = 1000;
+    int screenHeight = 1000;
+
+    // Drawing grid
+    int gridSpace = 100;
+    int gridSize = 10;
+
+    // Maze grid backend
+    int grid[ROWS][COLLS];
+
+    srand(time(NULL));
+    int startRow, startColl, endRow, endColl;
+
+    startRow = rand() % ROWS;
+    startColl = rand() % COLLS;
+
+
+    do {
+        endRow = rand() % ROWS;
+        endColl = rand() % COLLS;
+    } while (startRow == endRow && startColl == endColl);
+
+    InitWindow(screenWidth, screenHeight, "Mazing");
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+            ClearBackground(RAYWHITE);
+
+            DrawRectangle(startRow*gridSpace, startColl*gridSpace, gridSpace, gridSpace, GREEN);
+            DrawRectangle(endRow*gridSpace, endColl*gridSpace, gridSpace, gridSpace, RED);
+
+            for (int i=0; i<gridSize; i++) {
+                int y = i*gridSpace;
+                int x = i*gridSpace;
+                DrawLine(x, 0, x, 1000, BLACK);
+                DrawLine(0, y, 1000, y, BLACK);
+            }
+
+
+        EndDrawing();
+
+    }
+
+    // Close
+    CloseWindow();
+
+    return 0;
+}
