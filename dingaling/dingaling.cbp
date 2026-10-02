@@ -38,9 +38,29 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="algorithms.h" />
+		<Unit filename="bfs.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="maze.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="maze.h" />
+		<Unit filename="pathing.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="pathing.h" />
+		<Unit filename="results.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="results.h" />
+		<Unit filename="testbuilder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="testbuilder.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

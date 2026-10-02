@@ -171,7 +171,7 @@ void PrepareWalls(Generator *g, Maze *m) {
     // shuffle: go from the end, swap each item with a random earlier one
     for (int i = g->wallCount - 1; i > 0; i--) {
         int j = RngRange(&m->rng, 0, i);
-        int temp = g->walls[i];        // 1. put walls[i] in the spare cup
+        int temp = g->walls[i];        // 1. put walls[i] in the spare
         g->walls[i] = g->walls[j];     // 2. overwrite it with walls[j]
         g->walls[j] = temp;            // 3. put the saved value into j
     }

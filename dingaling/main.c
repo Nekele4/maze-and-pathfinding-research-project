@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "maze.h"
+#include "pathing.h"
 
 // Illustration funky monkey
 void DrawMaze(Maze *m, int cellSize) {
@@ -66,7 +67,7 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m) {
 
 int main()
 {
-    MazeConfig cfg = { .seed = 41, .cols = 100, .rows = 100, .obstacleRate = 50, .endCount = 1 };
+    MazeConfig cfg = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1 };
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
@@ -96,7 +97,13 @@ int main()
         if (gen.done && !checksumPrinted) {
             printf("checksum: %u\n", MazeChecksum(&maze));
             checksumPrinted = true;
+            int nb[4];
+            int n = GetNeighbors(&maze, maze.starts[0], nb);
+            printf("start %d has %d neighbors:", maze.starts[0], n);
+            for (int i = 0; i < n; i++) printf(" %d", nb[i]);
+            printf("\n");
         }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawMaze(&maze, cellSize);
