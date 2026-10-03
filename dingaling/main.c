@@ -3,9 +3,29 @@
 #include "stdbool.h"
 #include "maze.h"
 #include "pathing.h"
+#include "algorithms.h"
+
+typedef struct {
+    const Algo *algo;   // which algorithm, e.g. &BfsAlgo
+    void *state;        // its state, NULL until the maze is finished
+} Runner;
+
+// one unit of work for whatever is active
+static void StepActive(Generator *g, Maze *m, Runner *r) {
+    if (!g->done) { GeneratorStep(g, m); return; }
+    if (!r->state) r->state = r->algo->create(m);            // maze just finished
+    if (!r->algo->done(r->state)) r->algo->step(r->state, m);
+}
+
+static bool AllDone(Generator *g, Runner *r) {
+    return g->done && r->state && r->algo->done(r->state);
+}
 
 // Illustration funky monkey
-void DrawMaze(Maze *m, int cellSize) {
+void DrawMaze(Maze *m, int cellSize, Runner *r) {
+    // algoritmh goes first then the rest
+    if (r->state && r->algo->draw) r->algo->draw(r->state, m, cellSize);
+
     int s = m->starts[0];
     DrawRectangle((s % m->config.cols) * cellSize, (s / m->config.cols) * cellSize, cellSize, cellSize, GREEN);
     // then a for loop over endCount doing the same with m->ends[i] and RED
@@ -31,27 +51,27 @@ typedef struct {
     int btsFPS;
 } Playback;
 
-void Controls(Playback *pb, Generator *g, Maze *m) {
+void Controls(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (IsKeyPressed(KEY_SPACE)) pb->paused = !pb->paused;
-    if (IsKeyDown(KEY_UP)) pb->btsFPS++;
-    if (IsKeyDown(KEY_DOWN)) pb->btsFPS--;
+    if (IsKeyPressed(KEY_UP)) pb->btsFPS=pb->btsFPS + 10;
+    if (IsKeyPressed(KEY_DOWN)) pb->btsFPS=pb->btsFPS - 10;
     if (pb->btsFPS < 1) pb->btsFPS = 1;
-    if (pb->btsFPS >100) pb->btsFPS = 100;
+    if (pb->btsFPS >200) pb->btsFPS = 200;
 
     // Generator running
     if (!pb->paused) {
         for (int i = 0; i < pb->btsFPS; i++) {
-            if (!g->done) GeneratorStep(g, m);
+            if (!AllDone(g, r)) StepActive(g, m, r);
         }
     }
 
     // move single frame forward/next step of the operation
     if (pb->paused && IsKeyPressed(KEY_RIGHT)) {
-        if (!g->done) GeneratorStep(g, m);
+        if (!AllDone(g, r)) StepActive(g, m, r);
     }
 
     if (IsKeyPressed(KEY_ENTER)) {
-        while (!g->done) {GeneratorStep(g, m);}
+        while (!AllDone(g,r)) {StepActive(g, m, r);}
     }
 }
 
@@ -90,10 +110,11 @@ int main()
 
     bool checksumPrinted = false;
 
+    Runner runner = { .algo = &BfsAlgo, .state = NULL };
 
     while (!WindowShouldClose())
     {
-        Controls(&pb, &gen, &maze);
+        Controls(&pb, &gen, &maze, &runner);
         if (gen.done && !checksumPrinted) {
             printf("checksum: %u\n", MazeChecksum(&maze));
             checksumPrinted = true;
@@ -102,16 +123,20 @@ int main()
             printf("start %d has %d neighbors:", maze.starts[0], n);
             for (int i = 0; i < n; i++) printf(" %d", nb[i]);
             printf("\n");
+            Result r = RunAlgo(&BfsAlgo, &maze);
+            printf("BFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", r.found, r.pathLength, r.nodesExpanded, r.maxFrontier, r.timeMs);
         }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawMaze(&maze, cellSize);
+        DrawMaze(&maze, cellSize, &runner);
         DrawSettings(&pb, &gen, &maze);
+
         EndDrawing();
 
     }
 
+    if (runner.state) runner.algo->destroy(runner.state);
     // Close
     CloseWindow();
     FreeMaze(&maze);

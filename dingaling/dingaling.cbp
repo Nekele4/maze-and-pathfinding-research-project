@@ -38,10 +38,21 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="algorithms.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="algorithms.h" />
 		<Unit filename="bfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="bfs.h" />
+		<Unit filename="bfsdraw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="drawalgo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="drawalgo.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
