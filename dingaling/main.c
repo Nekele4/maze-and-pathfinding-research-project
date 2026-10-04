@@ -125,7 +125,10 @@ int main()
 
     bool checksumPrinted = false;
 
+    bool testsRan = false;
+
     Runner runner = { .algo = &BfsAlgo, .state = NULL };
+
 
     while (!WindowShouldClose())
     {
@@ -146,9 +149,11 @@ int main()
             AppendResult("resultsTest.csv", &rBFS);
         }
 
-        if (IsKeyPressed(KEY_T)) {
+        if (testsRan == false && IsKeyPressed(KEY_T)) {
             RunTests("resultsnew.csv");
             printf("tests finished\n");
+            testsRan = true;
+
         }
 
         BeginDrawing();

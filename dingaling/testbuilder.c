@@ -11,9 +11,9 @@ void RunTests(const char *filename) {
     int endCount = 1;
 
 
-    for (int s = 0; s<sizeof(sizes); s++) {
-        for (int r=0; r < sizeof(rates); r++) {
-            for (unsigned int seed = 1; seed < seedCount; seed++) {
+    for (int s = 0; s<sizeof(sizes)/sizeof(rates[0]); s++) {
+        for (int r=0; r < sizeof(rates)/sizeof(rates[0]); r++) {
+            for (unsigned int seed = 1; seed <= seedCount; seed++) {
                 MazeConfig cfg = { .seed = seed, .cols = sizes[s], .rows = sizes[s], .obstacleRate = rates[r], .endCount = endCount};
                 Maze maze = BuildMaze(cfg);
 
