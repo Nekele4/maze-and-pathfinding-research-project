@@ -4,6 +4,7 @@
 #include "maze.h"
 #include "pathing.h"
 #include "algorithms.h"
+#include "testbuilder.h"
 
 typedef struct {
     const Algo *algo;   // which algorithm, e.g. &BfsAlgo
@@ -19,6 +20,16 @@ static void StepActive(Generator *g, Maze *m, Runner *r) {
 
 static bool AllDone(Generator *g, Runner *r) {
     return g->done && r->state && r->algo->done(r->state);
+}
+
+static void ResetRunner(Runner *r) {
+    if (r->state) r->algo->destroy(r->state);   // free the old arrays first
+    r->state = NULL;                            // StepActive recreates it on the next step
+}
+
+static void SelectAlgo(Runner *r, int index) {
+    ResetRunner(r);
+    r->algo = algos[index];
 }
 
 // Illustration funky monkey
@@ -53,10 +64,15 @@ typedef struct {
 
 void Controls(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (IsKeyPressed(KEY_SPACE)) pb->paused = !pb->paused;
-    if (IsKeyPressed(KEY_UP)) pb->btsFPS=pb->btsFPS + 10;
-    if (IsKeyPressed(KEY_DOWN)) pb->btsFPS=pb->btsFPS - 10;
+    if (IsKeyPressed(KEY_UP)) pb->btsFPS *= 2;
+    if (IsKeyPressed(KEY_DOWN)) pb->btsFPS /= 2;
     if (pb->btsFPS < 1) pb->btsFPS = 1;
-    if (pb->btsFPS >200) pb->btsFPS = 200;
+    if (pb->btsFPS >4096) pb->btsFPS = 4096;
+
+    for (int k = 0; k < algoCount; k++) {
+        if (IsKeyPressed(KEY_ONE + k)) { SelectAlgo(r, k); pb->paused = true; }
+    }
+    if (IsKeyPressed(KEY_R)) { ResetRunner(r); pb->paused = true; }
 
     // Generator running
     if (!pb->paused) {
@@ -75,7 +91,7 @@ void Controls(Playback *pb, Generator *g, Maze *m, Runner *r) {
     }
 }
 
-void DrawSettings(Playback *pb, Generator *g, Maze *m) {
+void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (pb->paused) DrawText("PAUSED", 10, 10, 20, RED);
     else if (!pb->paused&&!g->done) DrawText("RUNNING", 10, 10, 20, GREEN);
     else if (g->done) DrawText(TextFormat("FINISHED"), 10, 10, 20, BLUE);
@@ -83,11 +99,12 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m) {
     DrawText(TextFormat("Obstacle: %d", m->config.obstacleRate), 10, 70, 20, BLACK);
     if (g->phase == 0) DrawText("BUILDING", 10, 100, 20, BLACK);
     if (g->phase == 1) DrawText("DESTROYING", 10, 100, 20, BLACK);
+    DrawText(TextFormat("Algo: %s", r->algo->name), 10, 130, 20, BLACK);
 }
 
 int main()
 {
-    MazeConfig cfg = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1 };
+    MazeConfig cfg = { .seed = 41, .cols = 200, .rows = 200, .obstacleRate = 100, .endCount = 1 };
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
@@ -95,8 +112,6 @@ int main()
 
     Generator gen = CreateGenerator(&maze);
     printf("stack top: %d, first item: %d, start: %d\n", gen.top, gen.stack[0], maze.starts[0]);
-
-
 
     int windowWidth = 1000;
     int windowHeight = 1000;
@@ -123,15 +138,23 @@ int main()
             printf("start %d has %d neighbors:", maze.starts[0], n);
             for (int i = 0; i < n; i++) printf(" %d", nb[i]);
             printf("\n");
-            Result r = RunAlgo(&BfsAlgo, &maze);
-            printf("BFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", r.found, r.pathLength, r.nodesExpanded, r.maxFrontier, r.timeMs);
+            Result rBFS = RunAlgo(&BfsAlgo, &maze);
+            Result rDFS = RunAlgo(&DfsAlgo, &maze);
+            printf("BFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", rBFS.found, rBFS.pathLength, rBFS.nodesExpanded, rBFS.maxFrontier, rBFS.timeMs);
+            printf("DFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", rDFS.found, rDFS.pathLength, rDFS.nodesExpanded, rDFS.maxFrontier, rDFS.timeMs);
+            Result t = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1,.checksum = 123, .algorithm = "fake", .found = 1, .pathLength = 5, .nodesExpanded = 20, .maxFrontier = 3, .timeMs = 0.5 };
+            AppendResult("resultsTest.csv", &rBFS);
+        }
+
+        if (IsKeyPressed(KEY_T)) {
+            RunTests("resultsnew.csv");
+            printf("tests finished\n");
         }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawMaze(&maze, cellSize, &runner);
-        DrawSettings(&pb, &gen, &maze);
-
+        DrawSettings(&pb, &gen, &maze, &runner);
         EndDrawing();
 
     }

@@ -49,6 +49,13 @@
 		<Unit filename="bfsdraw.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="dfs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="dfs.h" />
+		<Unit filename="dfsdraw.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="drawalgo.c">
 			<Option compilerVar="CC" />
 		</Unit>

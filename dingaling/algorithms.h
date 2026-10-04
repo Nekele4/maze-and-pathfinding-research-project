@@ -15,6 +15,10 @@ typedef struct {
 } Algo;
 
 extern const Algo BfsAlgo;
+extern const Algo DfsAlgo;
+
+extern const Algo *algos[];
+extern const int algoCount;
 
 Result RunAlgo(const Algo *a, Maze *m);
 

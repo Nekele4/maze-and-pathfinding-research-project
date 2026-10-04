@@ -63,5 +63,6 @@ bool InBounds(Maze *m, int x, int y);
 void GeneratorStep(Generator *g, Maze *m);
 void FreeGenerator(Generator *g);
 unsigned int MazeChecksum(Maze *m);
+Maze BuildMaze(MazeConfig cfg);
 
 #endif

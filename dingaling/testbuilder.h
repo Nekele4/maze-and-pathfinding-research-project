@@ -1,6 +1,6 @@
-#ifndef TESTBUILDER_H_INCLUDED
-#define TESTBUILDER_H_INCLUDED
+#ifndef TESTBUILDER_H
+#define TESTBUILDER_H
 
+void RunTests(const char *filename);
 
-
-#endif // TESTBUILDER_H_INCLUDED
+#endif

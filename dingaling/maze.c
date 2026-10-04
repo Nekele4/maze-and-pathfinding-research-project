@@ -253,4 +253,16 @@ unsigned int MazeChecksum(Maze *m) {
     return h;
 }
 
+Maze BuildMaze(MazeConfig cfg) {
+    Maze m = CreateMaze(cfg);
+    PickStart(&m);
+    PickEnds(&m);
+    Generator g = CreateGenerator(&m);
+    while (!g.done) {
+        GeneratorStep(&g, &m);
+    }
+    FreeGenerator(&g);
+    return m;
+}
+
 

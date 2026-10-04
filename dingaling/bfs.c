@@ -6,13 +6,6 @@
 
 #define UNREACHED (-1)
 
-static bool IsEnd(Maze *m, int cell) {
-    for (int i = 0; i <m->config.endCount; i++) {
-        if (m->ends[i] == cell) return true;
-    }
-    return false;
-}
-
 static void *BfsCreate(Maze *m) {
     BfsState *s = calloc(1, sizeof(BfsState));
     int cells = m->config.cols * m->config.rows;

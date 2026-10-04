@@ -1,0 +1,5 @@
+seed,cols,rows,obstacleRate,endCount,checksum,algorithm,found,pathLength,nodesExpanded,maxFrontier,timeMs
+41,100,100,100,1,2182956422,BFS,1,4018,9282,13,1.000
+41,25,25,100,1,1792319274,BFS,1,148,225,4,0.000
+41,200,200,50,1,1676197253,BFS,1,39,1633,83,0.000
+41,200,200,100,1,1178724642,BFS,1,1639,2279,8,1.000

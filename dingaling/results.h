@@ -4,6 +4,7 @@
 typedef struct {
     unsigned int seed;
     int cols, rows, obstacleRate, endCount;
+    unsigned int checksum;
     const char *algorithm;
     int found, pathLength, nodesExpanded, maxFrontier;
     double timeMs;

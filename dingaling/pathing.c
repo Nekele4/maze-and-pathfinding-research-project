@@ -28,3 +28,10 @@ int GetNeighbors(Maze *m, int cell, int out[4]) {
     }
     return count;
 }
+
+bool IsEnd(Maze *m, int cell) {
+    for (int i = 0; i <m->config.endCount; i++) {
+        if (m->ends[i] == cell) return true;
+    }
+    return false;
+}
