@@ -1,60 +1,3 @@
-""" import csv
-from collections import defaultdict
-
-data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
-
-class Averages():
-    def __init__(self):
-        self.pathLength = 0
-        self.nodesExpanded = 0
-        self.maxFrontier = 0
-        self.timeMS = 0
-
-averages = defaultdict(lambda: defaultdict(lambda: defaultdict(Averages)))
-
-metrics = [
-    "pathLength",
-    "nodesExpanded",
-    "maxFrontier",
-    "timeMs"
-]
-
-def Average(rows, metric):
-
-
-def ChooseAlgo():
-    print("select algorith to analyse:" )
-    selection = input()
-    while selection not in data:
-        print("Choose again: ")
-        selection = input()
-
-    return selection
-
-with open('resultsnew.csv', newline='') as csvfile:
-    reader = csv.DictReader(csvfile)
-    
-    for row in reader:
-        algorithm = row["algorithm"]
-        size = int(row["cols"])
-        obstacle = int(row["obstacleRate"])
-
-        data[algorithm][size][obstacle].append(row)
-
-selection = ChooseAlgo()
-selected = data[selection]
-
-rows = data["BFS"][100][50]
-values = []
-
-for row in rows:
-    values.append(int(row["nodesExpanded"]))
-
-print("Average node expanded BFS 50: ", sum(values) / len(values))
-
-print("Selected:", selection)
-print("Rows:", len(rows))        
-"""
 import csv
 from collections import *
 import matplotlib.pyplot as plot
@@ -62,7 +5,15 @@ import numpy as np
 import os
 
 GROUPS = ["algorithm", "cols", "obstacleRate"]
-METRICS = ["pathLength", "nodesExpanded", "maxFrontier"]
+METRICS = ["pathLength", "nodesExpanded", "maxFrontier", "timeMs"]
+LOG_METRICS = ["nodesExpanded", "maxFrontier"]
+COLORS = {
+    "BFS": "#5B009C", #Purple
+    "DFS": "#0A9C00", #Green 
+    "Dijkstra": "#FF8400", #orange
+    "AStar": "#0055FF", #Blue
+}
+
 
 def Convert(values):
     try:
@@ -73,7 +24,7 @@ def Convert(values):
         except ValueError:
             return values #if not able to convert to int or float just give string
 
-def LoadResults(filename):
+def LoadFile(filename):
     rows = []
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -98,8 +49,6 @@ def Summarize(groups, metrics):
     for key, rows in groups.items():
         summary[key] = {"n": len(rows)}
         for metric in metrics:
-            # YOUR PART: collect row[metric] for every row in rows,
-            # then summary[key][metric] = sum / count
             values = []
 
             for row in rows:
@@ -128,59 +77,23 @@ def WriteSummary(summary, filename):
 
             writer.writerow(row)
 
-def LoadSummary(filename):
-    rows = []
-    with open(filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            converted = {}
-            for column, value in row.items():
-                converted[column] = Convert(value)
-            rows.append(converted)
-    return rows
-
-#hardcoded needs fix!
-graphs = {
-    "pathLength": {
-        "xaxis": "obstacleRate",
-        "yaxis": "pathLength",
-        "sizes": [10, 20, 50, 100, 200, 500]
-    },
-
-    "nodesExpanded": {
-        "xaxis": "obstacleRate",
-        "yaxis": "nodesExpanded",
-        "sizes": [10, 20, 50, 100, 200, 500]
-    },
-
-    "maxFrontier": {
-        "xaxis": "obstacleRate",
-        "yaxis": "maxFrontier",
-        "sizes": [10, 20, 50, 100, 200, 500]
-    },
-
-    "runtime": {
-        "xaxis": "obstacleRate",
-        "yaxis": "timeMs",
-        "sizes": [10, 20, 50, 100, 200, 500]
-    }
-}
-
 # xaxis needs to be a variable (GROUPS), yaxis needs to be the resulting value (METRICS) 
 # size is rows and cols count, rows only for program
 def PlotGraph(rows, size, xaxis, yaxis):
-    algorithms = set(row["algorithm"] for row in rows)
+    algorithms = sorted(set(row["algorithm"] for row in rows))
 
     for algorithm in algorithms:
-        x = []
-        y = []
+        points = []
 
         for row in rows:
             if row["algorithm"] == algorithm and row["cols"] == size:
-                x.append(row[xaxis])
-                y.append(row[yaxis])
+                points.append((row[xaxis], row[yaxis]))
 
-        plot.plot(x, y, marker="o", label=algorithm)
+        points.sort()
+        x = [p[0] for p in points]
+        y = [p[1] for p in points]
+
+        plot.plot(x, y, marker="o", label=algorithm, color=COLORS[algorithm])
 
     plot.xlabel(xaxis)
     plot.ylabel("Average: " + yaxis)
@@ -193,10 +106,13 @@ def PlotGraph(rows, size, xaxis, yaxis):
 
     filename = f"graphs/graph_{size}_{xaxis}_{yaxis}.png"
 
+    if yaxis in LOG_METRICS:
+        plot.yscale("log")
+
     plot.savefig(filename)
     plot.close()
 
-rows = LoadResults("resultsnew.csv")
+rows = LoadFile("resultsnew.csv")
 print(len(rows))
 print(rows[0])
 
@@ -208,10 +124,14 @@ for key in list(groups)[:3]:
 summary = Summarize(groups, METRICS)
 WriteSummary(summary, "summary.csv")
 
-summaryRows = LoadSummary("summary.csv")
+summaryRows = LoadFile("summary.csv")
+sizes = sorted(set(row["cols"] for row in summaryRows))
+graphs = {}
+for metric in METRICS:
+    graphs[metric] = {"xaxis": "obstacleRate", "yaxis": metric}
 
 for name, graph in graphs.items():
-    for size in graph["sizes"]:
+    for size in sizes:
         PlotGraph(summaryRows, size, graph["xaxis"], graph["yaxis"])
 
 

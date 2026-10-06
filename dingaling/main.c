@@ -104,7 +104,7 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
 
 int main()
 {
-    MazeConfig cfg = { .seed = 41, .cols = 200, .rows = 200, .obstacleRate = 100, .endCount = 1 };
+    MazeConfig cfg = { .seed = 41, .cols = 200, .rows = 200, .obstacleRate = 50, .endCount = 1 };
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);

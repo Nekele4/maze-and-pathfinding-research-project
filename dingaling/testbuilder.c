@@ -5,8 +5,8 @@
 #include "results.h"
 
 void RunTests(const char *filename) {
-    int sizes[] = {10, 20, 50, 100, 200, 500};
-    int rates[] = {0, 25, 50, 75, 90, 100};
+    int sizes[] = {10, 20, 50, 100, 200, 500, 1000, 10000};
+    int rates[] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     int seedCount = 100;
     int endCount = 1;
 
