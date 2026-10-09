@@ -9,6 +9,7 @@ typedef struct {
     bool done, found;
     int foundCell;
     int nodesExpanded, maxFrontier;
+    int pathCost;
 } BfsState;
 
 void BfsDraw(void *state, Maze *m, int cellSize);

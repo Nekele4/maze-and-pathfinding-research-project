@@ -42,6 +42,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="algorithms.h" />
+		<Unit filename="astar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="astar.h" />
 		<Unit filename="bfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -56,6 +60,10 @@
 		<Unit filename="dfsdraw.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="dijkstra.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="dijkstra.h" />
 		<Unit filename="drawalgo.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -1,5 +1,5 @@
-#ifndef DRAWUTIL_H
-#define DRAWUTIL_H
+#ifndef DRAWALGO_H
+#define DRAWALGO_H
 #include "raylib.h"
 #include "maze.h"
 

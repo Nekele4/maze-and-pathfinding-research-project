@@ -9,6 +9,7 @@ typedef struct {
     bool done, found;
     int foundCell, pathLength;
     int nodesExpanded, maxFrontier;
+    int pathCost;
 } DfsState;
 
 void DfsDraw(void *state, Maze *m, int cellSize);

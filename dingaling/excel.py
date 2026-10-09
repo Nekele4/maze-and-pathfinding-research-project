@@ -4,16 +4,15 @@ import matplotlib.pyplot as plot
 import numpy as np
 import os
 
-GROUPS = ["algorithm", "cols", "obstacleRate"]
-METRICS = ["pathLength", "nodesExpanded", "maxFrontier", "timeMs"]
-LOG_METRICS = ["nodesExpanded", "maxFrontier"]
+GROUPS = ["algorithm", "cols", "obstacleRate", "maxCost"]
+METRICS = ["pathLength", "nodesExpanded", "maxFrontier", "timeMs", "pathCost"]
+LOG_METRICS = ["nodesExpanded", "maxFrontier", "pathLength", "pathCost"]
 COLORS = {
     "BFS": "#5B009C", #Purple
     "DFS": "#0A9C00", #Green 
     "Dijkstra": "#FF8400", #orange
     "AStar": "#0055FF", #Blue
 }
-
 
 def Convert(values):
     try:
@@ -34,8 +33,6 @@ def LoadFile(filename):
                 converted[column] = Convert(value)
             rows.append(converted)
     return rows
-
-
 
 def Group(rows, columns):
     groups = defaultdict(list)

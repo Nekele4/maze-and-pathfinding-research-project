@@ -22,8 +22,9 @@ typedef struct {
 typedef struct {
     unsigned int seed;
     int cols, rows;
-    int obstacleRate;   // 0 to 100 NEED TO IMPLEMENT!
+    int obstacleRate;
     int endCount;
+    int maxCost;
 } MazeConfig;
 
 typedef struct {
@@ -32,6 +33,7 @@ typedef struct {
     Cell *cells;
     int ends[MAX_ENDS];    // cell positions of the endpoints in array
     int starts[MAX_STARTS];
+    unsigned char *cost; // cell costs for dijkstra, astar
 } Maze;
 
 typedef struct {

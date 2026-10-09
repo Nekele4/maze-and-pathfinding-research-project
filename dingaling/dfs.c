@@ -3,13 +3,25 @@
 #include "pathing.h"
 
 static void *DfsCreate(Maze *m) {
-    DfsState *s = calloc(1, sizeof(DfsState));
+    DfsState *s = TrackCalloc(1, sizeof(DfsState));
+    if (s == NULL) return NULL;
+
     int cells = m->config.cols * m->config.rows;
     int start = m->starts[0];
 
-    s->seen = calloc(cells, sizeof(int));
-    s->stack = malloc(cells * sizeof(int));
-    s->parent = malloc(cells * sizeof(int));
+    s->seen = TrackCalloc(cells, sizeof(int));
+    s->stack = TrackAlloc(cells * sizeof(int));
+    s->parent = TrackAlloc(cells * sizeof(int));
+
+
+    if (s->seen == NULL || s->stack == NULL || s->parent == NULL) {
+        TrackFree(s->seen);
+        TrackFree(s->stack);
+        TrackFree(s->parent);
+        TrackFree(s);
+        return NULL;
+    }
+
     for (int i = 0; i < cells; i++) {
         s->parent[i] = -1;
     }
@@ -58,6 +70,7 @@ static void DfsStep(void *state, Maze *m) {
             s->foundCell = next;
             s->pathLength = s->top - 1;
             s->done = true;
+            s->pathCost = PathCost(m, s->parent, next);
         }
 
 
@@ -77,13 +90,18 @@ static void DfsResult(void *state, Result *r) {
     r->pathLength = s->found ? s->pathLength : 0;
     r->nodesExpanded = s->nodesExpanded;
     r->maxFrontier = s->maxFrontier;
+    r->pathCost = s->pathCost;
 
 }
 
 static void DfsDestroy(void *state) {
+    if (state == NULL) return;
+
     DfsState *s = (DfsState *)state;
-    free(s->seen); free(s->stack); free(s->parent);
-    free(s);
+    TrackFree(s->seen);
+    TrackFree(s->stack);
+    TrackFree(s->parent);
+    TrackFree(s);
 }
 
 

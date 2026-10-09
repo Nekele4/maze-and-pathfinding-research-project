@@ -7,11 +7,22 @@
 #define UNREACHED (-1)
 
 static void *BfsCreate(Maze *m) {
-    BfsState *s = calloc(1, sizeof(BfsState));
+    BfsState *s = TrackCalloc(1, sizeof(BfsState));
+    if (s == NULL) return NULL;
+
     int cells = m->config.cols * m->config.rows;
-    s->dist = malloc(cells * sizeof(int));
-    s->queue = malloc(cells * sizeof(int));
-    s->parent = malloc(cells * sizeof(int));
+    s->dist = TrackAlloc(cells * sizeof(int));
+    s->queue = TrackAlloc(cells * sizeof(int));
+    s->parent = TrackAlloc(cells * sizeof(int));
+
+
+    if (s->dist == NULL || s->queue == NULL || s->parent == NULL) {
+        TrackFree(s->dist);
+        TrackFree(s->queue);
+        TrackFree(s->parent);
+        TrackFree(s);
+        return NULL;
+    }
 
     for (int i=0; i<cells; i++) {
         s->dist[i] = UNREACHED;
@@ -43,6 +54,7 @@ static void BfsStep(void *state, Maze *m) {
         s->found = true;
         s->foundCell = cur;
         s->done = true;
+        s->pathCost = PathCost(m, s->parent, cur);
         return;
     }
 
@@ -73,13 +85,18 @@ static void BfsResult(void *state, Result *r) {
     r->pathLength = s->found ? s->dist[s->foundCell] : 0;
     r->nodesExpanded = s->nodesExpanded;
     r->maxFrontier = s->maxFrontier;
+    r->pathCost = s->pathCost;
 
 }
 
 static void BfsDestroy(void *state) {
+    if (state == NULL) return;
+
     BfsState *s = (BfsState *)state;
-    free(s->dist); free(s->queue); free(s->parent);
-    free(s);
+    TrackFree(s->dist);
+    TrackFree(s->queue);
+    TrackFree(s->parent);
+    TrackFree(s);
 }
 
 const Algo BfsAlgo = {

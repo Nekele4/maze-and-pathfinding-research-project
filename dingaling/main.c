@@ -1,10 +1,12 @@
 #include "raylib.h"
-#include "stdio.h"
-#include "stdbool.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include "maze.h"
 #include "pathing.h"
 #include "algorithms.h"
 #include "testbuilder.h"
+
 
 typedef struct {
     const Algo *algo;   // which algorithm, e.g. &BfsAlgo
@@ -14,7 +16,13 @@ typedef struct {
 // one unit of work for whatever is active
 static void StepActive(Generator *g, Maze *m, Runner *r) {
     if (!g->done) { GeneratorStep(g, m); return; }
-    if (!r->state) r->state = r->algo->create(m);            // maze just finished
+    if (!r->state) {
+        r->state = r->algo->create(m);             // maze just finished
+        if (!r->state) {
+            printf("out of memory in %s\n", r->algo->name);
+            exit(1);
+        }
+    }
     if (!r->algo->done(r->state)) r->algo->step(r->state, m);
 }
 
@@ -104,14 +112,13 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
 
 int main()
 {
-    MazeConfig cfg = { .seed = 41, .cols = 200, .rows = 200, .obstacleRate = 50, .endCount = 1 };
+    MazeConfig cfg = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1, .maxCost = 5 };
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
     PickEnds(&maze);
 
     Generator gen = CreateGenerator(&maze);
-    printf("stack top: %d, first item: %d, start: %d\n", gen.top, gen.stack[0], maze.starts[0]);
 
     int windowWidth = 1000;
     int windowHeight = 1000;
@@ -124,7 +131,6 @@ int main()
     Playback pb = { .paused = false, .btsFPS = 1 };
 
     bool checksumPrinted = false;
-
     bool testsRan = false;
 
     Runner runner = { .algo = &BfsAlgo, .state = NULL };
@@ -136,20 +142,11 @@ int main()
         if (gen.done && !checksumPrinted) {
             printf("checksum: %u\n", MazeChecksum(&maze));
             checksumPrinted = true;
-            int nb[4];
-            int n = GetNeighbors(&maze, maze.starts[0], nb);
-            printf("start %d has %d neighbors:", maze.starts[0], n);
-            for (int i = 0; i < n; i++) printf(" %d", nb[i]);
-            printf("\n");
-            Result rBFS = RunAlgo(&BfsAlgo, &maze);
-            Result rDFS = RunAlgo(&DfsAlgo, &maze);
-            printf("BFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", rBFS.found, rBFS.pathLength, rBFS.nodesExpanded, rBFS.maxFrontier, rBFS.timeMs);
-            printf("DFS: found=%d path=%d expanded=%d frontier=%d time=%.3fms\n", rDFS.found, rDFS.pathLength, rDFS.nodesExpanded, rDFS.maxFrontier, rDFS.timeMs);
-            Result t = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1,.checksum = 123, .algorithm = "fake", .found = 1, .pathLength = 5, .nodesExpanded = 20, .maxFrontier = 3, .timeMs = 0.5 };
-            AppendResult("resultsTest.csv", &rBFS);
         }
 
         if (testsRan == false && IsKeyPressed(KEY_T)) {
+            ResetRunner(&runner);
+
             RunTests("resultsnew.csv");
             printf("tests finished\n");
             testsRan = true;

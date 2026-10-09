@@ -31,7 +31,8 @@ Maze CreateMaze(MazeConfig cfg) {
 
     if (cfg.seed == 0) cfg.seed = (unsigned int)time(NULL);
 
-    printf("Seed: %u\n", cfg.seed);
+    if (cfg.maxCost < 1) cfg.maxCost = 1;
+    if (cfg.maxCost > 255) cfg.maxCost = 255; // its only in one byte no bigger than that
 
     Maze m;
 
@@ -41,6 +42,27 @@ Maze CreateMaze(MazeConfig cfg) {
 
     m.config = cfg;
     m.cells = malloc(cfg.cols * cfg.rows * sizeof(Cell));
+
+    int cells = cfg.cols*cfg.rows; // specifically for m.cost
+    m.cost = malloc(cells);
+
+    if (m.cells == NULL || m.cost == NULL) {
+        printf("out of memory creating maze\n");
+        exit(1);
+    }
+
+    Rng costRandom;
+    costRandom.state = cfg.seed *40503u + 1;
+    if (costRandom.state == 0) costRandom.state = 1;
+    for (int i=0; i<10; i++) RngNext(&costRandom);
+    for (int i = 0; i < cells; i++) {
+        if (cfg.maxCost == 1) {
+            m.cost[i] = 1;
+        }
+        else {
+            m.cost[i] = RngRange(&costRandom, 1, cfg.maxCost);
+        }
+    }
 
     //init for maze gen
     for (int i = 0; i < cfg.cols*cfg.rows; i++) {
@@ -61,7 +83,7 @@ Cell *GetCell(Maze *m, int x, int y) {
 // name speaks for itself lowkey
 void PickStart(Maze *m) {
     m->starts[0] = RngRange(&m->rng, 0, m->config.cols * m->config.rows - 1);
-    printf("Start: %d\n", m->starts[0]);
+
 }
 
 void PickEnds(Maze *m) {
@@ -84,7 +106,6 @@ void PickEnds(Maze *m) {
             }
         } while (duplicate);
         m->ends[i] = pick;
-        printf("Ends: %d\n", pick);
 
     }
 }
@@ -93,6 +114,8 @@ void PickEnds(Maze *m) {
 void FreeMaze(Maze *m) {
     free(m->cells);
     m->cells = NULL;
+    free(m->cost);
+    m->cost = NULL;
 }
 
 void ClearWall(Cell *c, int d) {
@@ -119,6 +142,8 @@ void Carve(Maze *m, int x, int y, int d) {
 Generator CreateGenerator(Maze *m) {
     Generator g;
     g.stack = malloc(m->config.cols * m->config.rows * sizeof(int));
+    if (g.stack == NULL) { printf("out of memory in generator\n"); exit(1); }
+
     g.top = 0;
     g.done = false;
 
@@ -150,6 +175,8 @@ void PrepareWalls(Generator *g, Maze *m) {
     int cols = m->config.cols;
     int rows = m->config.rows;
     g->walls = malloc(2 * cols * rows * sizeof(int));  // max walls
+    if (g->walls == NULL) { printf("out of memory in PrepareWalls\n"); exit(1); }
+
     g->wallCount = 0;
 
     for (int y = 0; y < rows; y++) {
@@ -176,9 +203,8 @@ void PrepareWalls(Generator *g, Maze *m) {
         g->walls[j] = temp;            // 3. put the saved value into j
     }
 
-    g->wallTarget = g->wallCount * (100 - m->config.obstacleRate) / 100;
+    g->wallTarget = (int)((long long)g->wallCount * (100 - m->config.obstacleRate) / 100);
     g->wallIndex = 0;
-    printf("walls left: %d, to remove: %d\n", g->wallCount, g->wallTarget);
 }
 
 //Walkie talkie
@@ -249,6 +275,11 @@ unsigned int MazeChecksum(Maze *m) {
         Cell *c = &m->cells[i];
         unsigned int bits = c->north | (c->east << 1) | (c->south << 2) | (c->west << 3);
         h = (h ^ bits) * 16777619u;                // mix this cell in
+    }
+    if (m->config.maxCost > 1) {
+        for (int i = 0; i < m->config.cols * m->config.rows; i++) {
+            h = (h ^ m->cost[i]) * 16777619u;
+        }
     }
     return h;
 }
