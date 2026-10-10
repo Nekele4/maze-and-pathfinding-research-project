@@ -147,7 +147,7 @@ int main()
         if (testsRan == false && IsKeyPressed(KEY_T)) {
             ResetRunner(&runner);
 
-            RunTests("resultsnew.csv");
+            RunTests("data/resultsnew.csv");
             printf("tests finished\n");
             testsRan = true;
 

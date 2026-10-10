@@ -8,6 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/dingaling" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="../dingaling" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -37,56 +38,60 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="src/algos" />
+			<Add directory="src/core" />
+			<Add directory="src/demo" />
+			<Add directory="src/tester" />
 		</Compiler>
-		<Unit filename="algorithms.c">
+		<Unit filename="src/algos/algorithms.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="algorithms.h" />
-		<Unit filename="astar.c">
+		<Unit filename="src/algos/algorithms.h" />
+		<Unit filename="src/algos/astar.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="astar.h" />
-		<Unit filename="bfs.c">
+		<Unit filename="src/algos/astar.h" />
+		<Unit filename="src/algos/bfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="bfs.h" />
-		<Unit filename="bfsdraw.c">
+		<Unit filename="src/algos/bfs.h" />
+		<Unit filename="src/algos/dfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="dfs.c">
+		<Unit filename="src/algos/dfs.h" />
+		<Unit filename="src/algos/dijkstra.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="dfs.h" />
-		<Unit filename="dfsdraw.c">
+		<Unit filename="src/algos/dijkstra.h" />
+		<Unit filename="src/core/maze.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="dijkstra.c">
+		<Unit filename="src/core/maze.h" />
+		<Unit filename="src/core/pathing.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="dijkstra.h" />
-		<Unit filename="drawalgo.c">
+		<Unit filename="src/core/pathing.h" />
+		<Unit filename="src/core/results.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="drawalgo.h" />
-		<Unit filename="main.c">
+		<Unit filename="src/core/results.h" />
+		<Unit filename="src/demo/bfsdraw.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="maze.c">
+		<Unit filename="src/demo/dfsdraw.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="maze.h" />
-		<Unit filename="pathing.c">
+		<Unit filename="src/demo/drawalgo.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="pathing.h" />
-		<Unit filename="results.c">
+		<Unit filename="src/demo/drawalgo.h" />
+		<Unit filename="src/demo/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="results.h" />
-		<Unit filename="testbuilder.c">
+		<Unit filename="src/tester/testbuilder.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="testbuilder.h" />
+		<Unit filename="src/tester/testbuilder.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

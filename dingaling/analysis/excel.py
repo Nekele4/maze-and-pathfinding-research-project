@@ -109,7 +109,7 @@ def PlotGraph(rows, size, xaxis, yaxis):
     plot.savefig(filename)
     plot.close()
 
-rows = LoadFile("resultsnew.csv")
+rows = LoadFile("data/resultsnew.csv")
 print(len(rows))
 print(rows[0])
 
@@ -119,9 +119,9 @@ for key in list(groups)[:3]:
     print(key, len(groups[key]))
 
 summary = Summarize(groups, METRICS)
-WriteSummary(summary, "summary.csv")
+WriteSummary(summary, "data/summary.csv")
 
-summaryRows = LoadFile("summary.csv")
+summaryRows = LoadFile("data/summary.csv")
 sizes = sorted(set(row["cols"] for row in summaryRows))
 graphs = {}
 for metric in METRICS:
