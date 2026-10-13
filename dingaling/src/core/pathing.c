@@ -52,6 +52,12 @@ int PathCost(Maze *m, int *parent, int foundCell) {
 
 }
 
+int PathSteps(int *parent, int foundCell) {
+    int n = 0;
+    while (parent[foundCell] != -1) { n++; foundCell = parent[foundCell]; }
+    return n;
+}
+
 static size_t g_current = 0, g_peak = 0, g_total = 0;
 
 void *TrackAlloc(size_t n) {

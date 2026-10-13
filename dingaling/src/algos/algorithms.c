@@ -5,7 +5,7 @@
 #include "pathing.h"
 
 
-const Algo *algos[] = {&BfsAlgo, &DfsAlgo};
+const Algo *algos[] = {&BfsAlgo, &DfsAlgo, &DijkstraAlgo, &AStarAlgo};
 const int algoCount = sizeof(algos) / sizeof(algos[0]);
 
 Result RunAlgo(const Algo *a, Maze *m) {

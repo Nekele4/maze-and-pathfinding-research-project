@@ -13,6 +13,9 @@ bool IsEnd(Maze *m, int cell);
 // Cell costs
 int PathCost(Maze *m, int *parent, int foundCell);
 
+// Heuristic helper
+int PathSteps(int *parent, int foundCell);
+
 // tracker
 void *TrackAlloc(size_t n);
 void TrackFree(void *p);

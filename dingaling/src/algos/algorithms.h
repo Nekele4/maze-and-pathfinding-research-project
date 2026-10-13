@@ -16,6 +16,8 @@ typedef struct {
 
 extern const Algo BfsAlgo;
 extern const Algo DfsAlgo;
+extern const Algo DijkstraAlgo;
+extern const Algo AStarAlgo;
 
 extern const Algo *algos[];
 extern const int algoCount;

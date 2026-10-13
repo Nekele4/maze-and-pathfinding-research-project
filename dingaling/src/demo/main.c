@@ -6,6 +6,7 @@
 #include "pathing.h"
 #include "algorithms.h"
 #include "testbuilder.h"
+#include "bestfirst.h"
 
 
 typedef struct {
@@ -112,7 +113,7 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
 
 int main()
 {
-    MazeConfig cfg = { .seed = 41, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1, .maxCost = 5 };
+    MazeConfig cfg = { .seed = 50, .cols = 100, .rows = 100, .obstacleRate = 50, .endCount = 1, .maxCost = 10};
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
@@ -141,7 +142,9 @@ int main()
         Controls(&pb, &gen, &maze, &runner);
         if (gen.done && !checksumPrinted) {
             printf("checksum: %u\n", MazeChecksum(&maze));
+
             checksumPrinted = true;
+
         }
 
         if (testsRan == false && IsKeyPressed(KEY_T)) {
@@ -154,7 +157,7 @@ int main()
         }
 
         BeginDrawing();
-        ClearBackground(RAYWHITE);
+        ClearBackground(WHITE);
         DrawMaze(&maze, cellSize, &runner);
         DrawSettings(&pb, &gen, &maze, &runner);
         EndDrawing();

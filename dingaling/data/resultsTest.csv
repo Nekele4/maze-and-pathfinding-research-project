@@ -1,2 +1,0 @@
-seed,cols,rows,obstacleRate,endCount,maxCost,checksum,algorithm,found,pathLength,nodesExpanded,maxFrontier,timeMs,pathCost,totalBytes,peakBytes
-41,10,10,100,1,5,1813434860,BFS,1,37,62,5,0.000,113,1256,1256

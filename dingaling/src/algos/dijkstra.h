@@ -1,6 +1,0 @@
-#ifndef DIJKSTRA_H_INCLUDED
-#define DIJKSTRA_H_INCLUDED
-
-
-
-#endif // DIJKSTRA_H_INCLUDED

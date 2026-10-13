@@ -9,12 +9,13 @@ void RunTests(const char *filename) {
     if (f) fclose(f);
 
     //              1  2   3    4    5    6    7      8
-    int sizes[] = {10, 20, 50, 100, 200, 500, 1000, 10000};
-    int rates[] = {0, 25, 50, 75, 100};
+    int sizes[] = {10, 20, 50, 100, 200, 500, 1000};
+    int rates[] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     int cost[] = {1, 5, 10};
 
+    // sizes and seedcount array sizes must match
     //                   1    2    3    4    5    6    7    8
-    int seedCounts[] = {100, 100, 100, 100, 100, 100, 100, 10};
+    int seedCounts[] = {100, 100, 100, 100, 100, 100, 50};
     int endCount = 1;
 
 

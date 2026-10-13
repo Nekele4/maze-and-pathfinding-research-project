@@ -50,7 +50,6 @@
 		<Unit filename="src/algos/astar.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/algos/astar.h" />
 		<Unit filename="src/algos/bfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -62,7 +61,6 @@
 		<Unit filename="src/algos/dijkstra.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src/algos/dijkstra.h" />
 		<Unit filename="src/core/maze.c">
 			<Option compilerVar="CC" />
 		</Unit>
