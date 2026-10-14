@@ -50,6 +50,10 @@
 		<Unit filename="src/algos/astar.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="src/algos/bestfirst.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/algos/bestfirst.h" />
 		<Unit filename="src/algos/bfs.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -73,6 +77,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/core/results.h" />
+		<Unit filename="src/demo/bestfirstdraw.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/demo/bfsdraw.c">
 			<Option compilerVar="CC" />
 		</Unit>

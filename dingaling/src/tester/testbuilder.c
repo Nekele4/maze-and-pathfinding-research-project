@@ -3,20 +3,27 @@
 #include "maze.h"
 #include "algorithms.h"
 #include "results.h"
+#include <time.h>
 
 void RunTests(const char *filename) {
     FILE *f = fopen(filename, "w");     // "w" empties the file
     if (f) fclose(f);
 
-    //              1  2   3    4    5    6    7      8
+    /*              1  2   3    4    5    6    7      8
     int sizes[] = {10, 20, 50, 100, 200, 500, 1000};
     int rates[] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
     int cost[] = {1, 5, 10};
 
     // sizes and seedcount array sizes must match
-    //                   1    2    3    4    5    6    7    8
+                      1    2    3    4    5    6    7    8
     int seedCounts[] = {100, 100, 100, 100, 100, 100, 50};
+    */
     int endCount = 1;
+
+    int sizes[]      = {10000};
+    int rates[] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int cost[]       = {1, 5, 10};
+    int seedCounts[] = {10};
 
 
     for (size_t s = 0; s<sizeof(sizes)/sizeof(sizes[0]); s++) {
@@ -32,8 +39,10 @@ void RunTests(const char *filename) {
                         AppendResult(filename, &res);
                     }
                     FreeMaze(&maze);
-                    printf("size %d rate %d cost %d done\n", sizes[s], rates[r], cost[c]);
+
                 }
+
+                printf("size %d rate %d cost %d done\n", sizes[s], rates[r], cost[c]);
             }
 
         }
