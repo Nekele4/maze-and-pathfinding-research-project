@@ -42,7 +42,7 @@ static void SelectAlgo(Runner *r, int index) {
 }
 
 // Illustration funky monkey
-void DrawMaze(Maze *m, int cellSize, Runner *r) {
+void DrawMaze(Maze *m, int cellSize, Runner *r, bool showCosts) {
     // algoritmh goes first then the rest
     if (r->state && r->algo->draw) r->algo->draw(r->state, m, cellSize);
 
@@ -63,12 +63,34 @@ void DrawMaze(Maze *m, int cellSize, Runner *r) {
             if (c->east) DrawLine(px+cellSize, py, px+cellSize, py+cellSize, BLACK);
         }
     }
+
+    if (showCosts) {
+        int fs = cellSize /2;
+        if (fs > 30) fs = 30;
+
+        if (fs >=10) {
+            int cells = m->config.cols * m->config.rows;
+            for (int i = 0; i < cells; i++) {
+                int px = (i % m->config.cols) * cellSize;
+                int py = (i / m->config.cols) * cellSize;
+
+                const char *label = TextFormat("%d", m->cost[i]);
+                int tw = MeasureText(label, fs);
+                int tx = px + (cellSize - tw) / 2;      // centre in the cell
+                int ty = py + (cellSize - fs) / 2;
+
+                //DrawText(label, tx + 2, ty + 2, fs, WHITE);   // shadow
+                DrawText(label, tx, ty, fs, BLACK);           // number
+            }
+        }
+    }
 }
 
 // control functions, toggles etc.
 typedef struct {
     bool paused;
     int btsFPS;
+    bool showCosts;
 } Playback;
 
 void Controls(Playback *pb, Generator *g, Maze *m, Runner *r) {
@@ -98,6 +120,8 @@ void Controls(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (IsKeyPressed(KEY_ENTER)) {
         while (!AllDone(g,r)) {StepActive(g, m, r);}
     }
+
+    if (IsKeyPressed(KEY_C)) pb->showCosts = !pb->showCosts;
 }
 
 void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
@@ -109,11 +133,12 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (g->phase == 0) DrawText("BUILDING", 10, 100, 20, BLACK);
     if (g->phase == 1) DrawText("DESTROYING", 10, 100, 20, BLACK);
     DrawText(TextFormat("Algo: %s", r->algo->name), 10, 130, 20, BLACK);
+    DrawText(pb->showCosts ? "Costs: ON (C)" : "Costs: off (C)", 10, 160, 20, BLACK);
 }
 
 int main()
 {
-    MazeConfig cfg = { .seed = 50, .cols = 100, .rows = 100, .obstacleRate = 50, .endCount = 1, .maxCost = 10};
+    MazeConfig cfg = { .seed = 50, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1, .maxCost = 10};
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
@@ -129,7 +154,7 @@ int main()
     InitWindow(windowWidth, windowHeight, "MAZE");
 
     SetTargetFPS(60);
-    Playback pb = { .paused = false, .btsFPS = 1 };
+    Playback pb = { .paused = false, .btsFPS = 1, .showCosts = false };
 
     bool checksumPrinted = false;
     bool testsRan = false;
@@ -158,8 +183,8 @@ int main()
 
         BeginDrawing();
         ClearBackground(WHITE);
-        DrawMaze(&maze, cellSize, &runner);
-        DrawSettings(&pb, &gen, &maze, &runner);
+        DrawMaze(&maze, cellSize, &runner, pb.showCosts);
+        //DrawSettings(&pb, &gen, &maze, &runner);
         EndDrawing();
 
     }
