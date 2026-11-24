@@ -65,8 +65,8 @@ void DrawMaze(Maze *m, int cellSize, Runner *r, bool showCosts) {
     }
 
     if (showCosts) {
-        int fs = cellSize /2;
-        if (fs > 30) fs = 30;
+        int fs = cellSize / 2;
+        if (fs > 40) fs = 40;
 
         if (fs >=10) {
             int cells = m->config.cols * m->config.rows;
@@ -133,12 +133,12 @@ void DrawSettings(Playback *pb, Generator *g, Maze *m, Runner *r) {
     if (g->phase == 0) DrawText("BUILDING", 10, 100, 20, BLACK);
     if (g->phase == 1) DrawText("DESTROYING", 10, 100, 20, BLACK);
     DrawText(TextFormat("Algo: %s", r->algo->name), 10, 130, 20, BLACK);
-    DrawText(pb->showCosts ? "Costs: ON (C)" : "Costs: off (C)", 10, 160, 20, BLACK);
+    DrawText(pb->showCosts ? "COST: ON (C)" : "COST: OFF (C)", 10, 160, 20, BLACK);
 }
 
 int main()
 {
-    MazeConfig cfg = { .seed = 50, .cols = 10, .rows = 10, .obstacleRate = 100, .endCount = 1, .maxCost = 10};
+    MazeConfig cfg = { .seed = 50, .cols = 50, .rows = 50, .obstacleRate = 50, .endCount = 1, .maxCost = 10};
     Maze maze = CreateMaze(cfg);
 
     PickStart(&maze);
@@ -154,7 +154,7 @@ int main()
     InitWindow(windowWidth, windowHeight, "MAZE");
 
     SetTargetFPS(60);
-    Playback pb = { .paused = false, .btsFPS = 1, .showCosts = false };
+    Playback pb = { .paused = true, .btsFPS = 1, .showCosts = false };
 
     bool checksumPrinted = false;
     bool testsRan = false;
@@ -184,7 +184,7 @@ int main()
         BeginDrawing();
         ClearBackground(WHITE);
         DrawMaze(&maze, cellSize, &runner, pb.showCosts);
-        //DrawSettings(&pb, &gen, &maze, &runner);
+        // DrawSettings(&pb, &gen, &maze, &runner);
         EndDrawing();
 
     }

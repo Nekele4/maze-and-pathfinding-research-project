@@ -3,6 +3,7 @@ from collections import *
 import matplotlib.pyplot as plot
 import numpy as np
 import os
+import math
 
 GROUPS = ["algorithm", "cols", "obstacleRate", "maxCost"]
 METRICS = ["pathLength", "nodesExpanded", "maxFrontier", "timeMs", "pathCost"]
@@ -45,18 +46,25 @@ def Group(rows, columns):
 def Summarize(groups, metrics):
     summary = {}
     for key, rows in groups.items():
-        summary[key] = {"n": len(rows)}
+        n = len(rows)
+        summary[key] = {"n": n}
         for metric in metrics:
-            values = []
+            values = [row[metric] for row in rows]      
+            mean = sum(values) / n
+            summary[key][metric] = mean
 
-            for row in rows:
-                values.append(row[metric])
-            
-            summary[key][metric] = sum(values)/len(values)
+            if n > 1:
+                variance = sum((v - mean) ** 2 for v in values) / (n - 1)
+                summary[key][metric + "_std"] = math.sqrt(variance)
+            else:
+                summary[key][metric + "_std"] = 0.0
+    
     return summary
 
 def WriteSummary(summary, filename):
-    fieldnames = GROUPS + ["n"] + METRICS
+    stdColumns = [m + "_std" for m in METRICS]
+    fieldnames = GROUPS + ["n"] + METRICS + stdColumns
+
     with open(filename, "w+", newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -72,6 +80,7 @@ def WriteSummary(summary, filename):
 
             for metric in METRICS:
                 row[metric] = values[metric]
+                row[metric + "_std"] = values[metric + "_std"]
 
             writer.writerow(row)
 
@@ -100,6 +109,7 @@ def WriteSummaryDoc(summary, filename, groupCols, metrics):
 # xaxis needs to be a variable (GROUPS), yaxis needs to be the resulting value (METRICS) 
 # size is rows and cols count, rows only for program
 def PlotGraph(rows, size, cost, xaxis, yaxis):
+    BAND = "se" 
     algorithms = sorted(set(row["algorithm"] for row in rows))
     
     for algorithm in algorithms:
@@ -107,13 +117,25 @@ def PlotGraph(rows, size, cost, xaxis, yaxis):
 
         for row in rows:
             if row["algorithm"] == algorithm and row["cols"] == size and row["maxCost"] == cost:
-                points.append((row[xaxis], row[yaxis]))
-
+                points.append((row[xaxis], row[yaxis], row[yaxis + "_std"], row["n"]))
+       
         points.sort()
         x = [p[0] for p in points]
         y = [p[1] for p in points]
 
         plot.plot(x, y, marker="o", label=algorithm, color=COLORS.get(algorithm))
+
+        if BAND != "none":
+            if BAND == "se":
+                s = [p[2] / math.sqrt(p[3]) for p in points]
+            else:
+                s = [p[2] for p in points]
+        
+        
+            floor = 1 if yaxis in LOG_METRICS else 0
+            lower = [max(yy - ss, floor) for yy, ss in zip(y, s)]
+            upper = [yy + ss for yy, ss in zip(y, s)]
+            plot.fill_between(x, lower, upper, alpha=0.1, color=COLORS.get(algorithm), linewidth=0)
 
     plot.xlabel(xaxis)
     plot.ylabel("Average: " + yaxis)

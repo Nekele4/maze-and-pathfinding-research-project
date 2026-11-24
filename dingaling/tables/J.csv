@@ -1,0 +1,4 @@
+﻿Factor,A* / Dijkstra (cellen),BFS / Dijkstra (padkost),DFS / BFS (padlengte)
+Grootte,"0,76 tot 0,82","1,11 tot 1,35","5,16 tot 5.875,81"
+Murendichtheid,"0,73 tot 1,00","1,00 tot 1,65","1,00 tot 327,19"
+Max kost,"0,12 tot 0,78","1,00 tot 1,32","223,73 tot 223,73"

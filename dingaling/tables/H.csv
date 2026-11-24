@@ -1,0 +1,7 @@
+﻿Meetwaarde,"0%, kost 1","0%, kost 10","50%, kost 1","50%, kost 10","100%, kost 1","100%, kost 10"
+Padlengte,BFS / Dijkstra / A*,BFS,BFS / Dijkstra / A*,BFS,BFS / DFS / Dijkstra / A*,BFS / DFS / Dijkstra / A*
+Padkost,BFS / Dijkstra / A*,Dijkstra / A*,BFS / Dijkstra / A*,Dijkstra / A*,BFS / DFS / Dijkstra / A*,BFS / DFS / Dijkstra / A*
+Onderzochte cellen,A*,A*,A*,A*,DFS,DFS
+Frontier,BFS / Dijkstra,BFS,BFS / Dijkstra,BFS,BFS / Dijkstra,BFS / A*
+Tijd,A*,DFS,A*,BFS,BFS,BFS
+Geheugen (piek),Dijkstra / A*,Dijkstra / A*,Dijkstra / A*,Dijkstra / A*,Dijkstra / A*,Dijkstra / A*
